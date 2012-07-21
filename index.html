@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Battleships Demo</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		
+		<link href='http://fonts.googleapis.com/css?family=Prosto+One' rel='stylesheet' type='text/css'>
+		<link href="css/styles.css" rel="stylesheet" />
+		
+		<script src="js/libs/jQuery/jquery-1.7.2.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/jquery-ui.min.js"></script>
+		<script src="js/app.js"></script>
+		
+	</head>
+
+	<body>
+		<header>
+			<div id="headerWrapper">
+				<h1>Battleships</h1>
+				<h2>The classic boardgame in browser format!</h2>
+			</div>
+		</header>
+		
+		<div id="wrapper">
+
+			<div id="controls">
+				<h1 id="gameStageTitle">Deployment Phase</h1>
+				<button id="buttonGameStart">Start!</button>
+				<button id="buttonSetRandom">Position Ships</button>
+			</div>
+
+			<div id="gameDeployment">
+
+								
+				<div id="playerDeploymentGrid" class="gridContainer"></div>
+				
+				<div class="playerShip" id="playerDestroyer"></div>
+				<div class="playerShip" id="playerCruiser"></div>
+				<div class="playerShip" id="playerSubmarine"></div>
+				<div class="playerShip" id="playerBattleship"></div>
+				<div class="playerShip" id="playerCarrier"></div>
+
+				<div id="playerShips">
+					
+
+					
+				</div>
+				
+			</div>
+			
+			<div id="gameBoard" style="display: none;">
+
+
+				<div id="playerGrid" class="gridContainer"></div>
+				<div id="aiGrid" class="gridContainer gridRight"></div>
+
+			</div>				
+			
+		</div>
+		
+	
+
+	</body>
+</html>
