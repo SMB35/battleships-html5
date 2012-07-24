@@ -18,21 +18,36 @@ var shipSizes = [2, 3, 3, 4, 5];
 var placements = [];
 var takenspace = [];
 
-function playerShip(name, x, y) {
+var GRID_SIZE = 16;
+var GRID_SIZE_BOX_PIXELS = 32;
+
+var ORIENTATION_HORIZONTAL = 0;
+var ORIENTATION_VERTICAL   = 1;
+
+function playerShip(name, size, x, y, orientation, placement) {
 	this.name = name;
+	this.size = size;
+	this.htmlObject  = $('#player' + name);
+	this.orientation = orientation;
+	this.placement   = placement;
 	this.x = x;
 	this.y = y;
 
-	this.getName = new function() {
-		return this.name;
+	this.getjQueryWrapper = function() {
+		return this.htmlObject;
 	}
 
-	this.getX = new function() {
-		return this.x;
+	this.setPlacements = function(placements) {
+		this.placements = placements;
 	}
 
-	this.getY = new function() {
-		return this.y;
+	this.setPosition = function() {
+		this.htmlObject.css('left', (this.placements[0] * GRID_SIZE_BOX_PIXELS));
+		this.htmlObject.css('top', (this.placements[1] * GRID_SIZE_BOX_PIXELS) - 1);		
+	}
+
+	this.getOrientation = function() {
+		return this.orientation;
 	}
 
 	this.getDroppedX = new function() {
@@ -50,22 +65,15 @@ function checkPlacementConfines(size, spot) {
 
 function checkSpaceTaken(x, y) {
 	for (var i = 0;i < takenspace.length;i++) {
-		console.log('comparing ' + [x, y] + ' to ' + takenspace[i]);
-		if (x == takenspace[i][0] && y == takenspace[i][1]) {
-			//alert('collision');
-			console.log('space is taken');
-			return true
+		if (x == takenspace[i][0] || y == takenspace[i][1]) {
+			return true;
 		}
 	}
-	console.log(takenspace);
-	console.log('space is not taken');
 	return false;
 }
 
 function createSpacesTaken(x, y, size) {
-	console.log(x + ' :: ' + y + ' :: ' + size);
 	for (var i = 0;i < size;i++) {
-		console.log(i);
 		takenspace.push([x + i, y]);
 	}
 }
@@ -74,9 +82,7 @@ function createRandomPlacement(shipSize) {
 	var x = createRandomSpot();
 	var y = createRandomSpot();
 	if (checkPlacementConfines(shipSize, x) && checkPlacementConfines(shipSize, y) && !checkSpaceTaken(x, y) ) {
-		//takenspace.push([x, y]);
 		createSpacesTaken(x, y, shipSize);
-		console.log(checkSpaceTaken(x, y));
 		return [x, y];
 	} else {
 		return createRandomPlacement(shipSize);
@@ -84,28 +90,40 @@ function createRandomPlacement(shipSize) {
 }
 
 function createRandomPlacements() {
-	for (var i = 0;i < 5;i++) {
-		placements[i] = createRandomPlacement(shipSizes[i]);
+	for (var i = 0;i < playerShips.length;i++) {
+		playerShips[i].setPlacements(createRandomPlacement(playerShips[i].size));
 	}
 }
 
 function createRandomSpot() {
+	// Math floor needed here?
 	return Math.floor(Math.random() * 16);
 }
 
+function createRandomOrientation() {
+	return Math.random();
+}
+
 function positionShipsToRandoms() {
-	for (var i = 0;i < 5;i++) {
-		$('#player' + shipNames[i]).css('left', (placements[i][0] * 32));
-		$('#player' + shipNames[i]).css('top', (placements[i][1] * 32) - 1);
+	for (var i = 0;i < playerShips.length;i++) {
+		playerShips[i].setPosition();
 	}
 }
 
+function generateGrids() {
+	
+}
+
+function generateGrid() {
+	
+}
+
 function createShips() {
-	var destroyer = new playerShip('Destroyer', [0, 0]);
-	var cruiser = new playerShip('Cruiser', [0, 0]);
-	var submarine = new playerShip('Submarine', [0, 0]);
-	var battleship = new playerShip('Battleship', [0, 0]);
-	var carrier = new playerShip('Carrier', [0, 0]);
+	var destroyer = new playerShip('Destroyer', 2, [0, 0], ORIENTATION_HORIZONTAL, placements[0]);
+	var cruiser = new playerShip('Cruiser', 3, [0, 0], ORIENTATION_HORIZONTAL, placements[1]);
+	var submarine = new playerShip('Submarine', 3, [0, 0], ORIENTATION_HORIZONTAL, placements[2]);
+	var battleship = new playerShip('Battleship', 4, [0, 0], ORIENTATION_HORIZONTAL, placements[3]);
+	var carrier = new playerShip('Carrier', 5, [0, 0], ORIENTATION_HORIZONTAL, placements[4]);
 	playerShips = [destroyer, cruiser, submarine, battleship, carrier];
 }
 
@@ -204,6 +222,7 @@ $().ready(function() {
 	$deployGrid = $('#playerDeploymentGrid');
 	$phaseTitle = $('#gameStageTitle');
 	
+	createShips();
 	createRandomPlacements();
 	drawGrid(defaultBoxWidth);
 	
@@ -218,10 +237,13 @@ $().ready(function() {
 		takenspace = [];
 		createRandomPlacements();
 		positionShipsToRandoms();
-		console.log(takenspace);
 	});
 
-	createShips();
+	$('.playerShip').on('click', function() {
+		$('.playerShip').removeClass('playerShipSelected');
+		$(this).addClass('playerShipSelected');
+	});
+
 	makeShipsDraggable();
 	positionShipsToRandoms();
 });
